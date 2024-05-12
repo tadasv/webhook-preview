@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+  </head>
+  <body hx-get="{{ .ViewURL }}" hx-trigger="every 5s" outerHTML="swap" class="bg-slate-100">
+    <div class="bg-indigo-600 px-6 py-2.5 sm:px-3.5">
+      <center class="text-sm leading-6 text-white">
+        Send requests to <strong class="font-semibold"><a target="_blank" href="{{ .EndpointURL }}">{{ .EndpointURL }}</a></strong>
+      </center>
+    </div>
+
+    <div class="max-w-3xl mx-auto">
+      {{ if .Requests }}
+        {{ range .Requests }}
+          <div class="my-4">
+            <div class="overflow-hidden bg-white shadow sm:rounded-md">
+              <ul role="list" class="divide-y divide-gray-200">
+                <li class="px-4 py-4 sm:px-6">
+                  <div class="text-sm text-slate-500 font-semibold">Timestamp</div>
+                  <pre>{{ .Timestamp }}</pre>
+                </li>
+                <li class="px-4 py-4 sm:px-6">
+                  <div class="text-sm text-slate-500 font-semibold">Method</div>
+                  <pre>{{ .Request.Method }}</pre>
+                </li>
+                <li class="px-4 py-4 sm:px-6">
+                  <div class="text-sm text-slate-500 font-semibold">URL</div>
+                  <pre>{{ .Request.URL }}</pre>
+                </li>
+                <li class="px-4 py-4 sm:px-6">
+                  <div class="text-sm text-slate-500 font-semibold">Headers</div>
+                  <pre class="overflow-auto">
+                  {{- range $key, $values := .Request.Header }}
+                    {{- range $value := $values }}
+{{ $key }}: {{ $value }}
+                    {{- end }}
+                  {{- end -}}
+                  </pre>
+                  </ul>
+                </li>
+                {{ if .Data }}
+                <li class="px-4 py-4 sm:px-6">
+                  <div class="text-sm text-slate-500 font-semibold">Body</div>
+                  <pre class="overflow-auto">{{ printf "%s" .Data }}</pre>
+                </li>
+                {{ end }}
+            </div>
+          </div>
+        {{ end }}
+      {{ else }}
+        <div class="my-4">
+          <div class="overflow-hidden bg-white shadow sm:rounded-md">
+            <ul role="list" class="divide-y divide-gray-200">
+              <li class="px-4 py-4 sm:px-6">
+                Waiting for incoming requests...
+              </li>
+            </ul>
+          </div>
+        </div>
+      {{ end }}
+    </div>
+  </body>
+</html>
